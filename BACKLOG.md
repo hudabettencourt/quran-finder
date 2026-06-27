@@ -10,33 +10,40 @@
 ## PHASE 1 — MVP
 
 ### SETUP
-- [ ] **SETUP-01** Init project Next.js 14 + TypeScript + Tailwind
+- [x] **SETUP-01** Init project Next.js + TypeScript + Tailwind
   ```bash
   npx create-next-app@latest quran-finder --typescript --tailwind --eslint --app --src-dir --import-alias "@/*"
   ```
-- [ ] **SETUP-02** Install dependencies tambahan
+  > Pakai Next.js 16 (bukan 14 seperti spec awal).
+
+- [x] **SETUP-02** Install dependencies tambahan
   ```bash
-  npm install @fontsource/amiri lucide-react
+  npm install lucide-react
   ```
-- [ ] **SETUP-03** Setup folder structure sesuai spec (`components/`, `lib/`, `types/`)
-- [ ] **SETUP-04** Setup font Arab di `layout.tsx` — import Amiri dari Google Fonts
-- [ ] **SETUP-05** Setup Tailwind config — tambah font custom, warna aksen teal
+  > Font Amiri via `next/font/google`, bukan `@fontsource/amiri`.
+
+- [x] **SETUP-03** Setup folder structure sesuai spec (`components/`, `lib/`, `types/`)
+
+- [x] **SETUP-04** Setup font Arab di `layout.tsx` — import Amiri dari Google Fonts
+
+- [x] **SETUP-05** Setup Tailwind config — tambah font custom, warna aksen teal
+  > Via `globals.css` `@theme` (Tailwind v4).
 
 ---
 
 ### TYPES
-- [ ] **TYPE-01** Buat `src/types/quran.ts` — definisi `Surah`, `Ayah`, `SearchResult`
+- [x] **TYPE-01** Buat `src/types/quran.ts` — definisi `Surah`, `Ayah`, `SearchResult`
 
 ---
 
 ### API ROUTES (server-side proxy — hindari CORS)
-- [ ] **API-01** Buat `src/app/api/search/route.ts`
+- [x] **API-01** Buat `src/app/api/search/route.ts`
   - Terima query param: `q` (keyword) dan `lang` (default: `ar`)
   - Fetch ke `https://api.alquran.cloud/v1/search/{q}/all/{edition}`
   - Kalau hasil Arab < 3 ayat, otomatis fetch ulang ke edisi `id.indonesian`
   - Return JSON: `{ matches: Ayah[], count: number, source: 'ar' | 'id' }`
 
-- [ ] **API-02** Buat `src/app/api/ayah/route.ts`
+- [x] **API-02** Buat `src/app/api/ayah/route.ts`
   - Terima query param: `ref` (format: `surah:ayat`, contoh: `2:255`)
   - Fetch paralel 3 sekaligus: teks Arab + terjemah ID + transliterasi EN
   - Return JSON: `{ arabic, translation, transliteration }`
@@ -44,13 +51,13 @@
 ---
 
 ### COMPONENTS
-- [ ] **COMP-01** Buat `src/components/SearchBar.tsx`
+- [x] **COMP-01** Buat `src/components/SearchBar.tsx`
   - Input teks controlled
   - Tombol "Cari" — trigger search on click
   - Enter key juga trigger search
   - Props: `onSearch: (query: string) => void`, `loading: boolean`
 
-- [ ] **COMP-02** Buat `src/components/VoiceButton.tsx`
+- [x] **COMP-02** Buat `src/components/VoiceButton.tsx`
   - Cek support Web Speech API — tampilkan pesan kalau tidak support
   - State: idle / recording / processing
   - Animasi pulse saat recording
@@ -58,15 +65,15 @@
   - Setelah dapat final transcript → panggil `onResult(text)`
   - Props: `onResult: (text: string) => void`, `disabled: boolean`
 
-- [ ] **COMP-03** Buat `src/components/AyahCard.tsx`
+- [x] **COMP-03** Buat `src/components/AyahCard.tsx`
   - Tampilkan: nama surah, nomor ayat, teks Arab, juz, makkiyah/madaniyah
   - Teks Arab: font Amiri, min 22px, dir="rtl", text-right
-  - State collapsed/expanded untuk terjemah
+  - State collapsed/expanded untuk terjemah + transliterasi
   - Saat pertama expand: fetch ke `/api/ayah?ref={surah}:{ayat}`
   - Tampilkan skeleton loader saat fetch terjemah
   - Props: `ayah: Ayah`, `defaultExpanded?: boolean`
 
-- [ ] **COMP-04** Buat `src/components/SearchResults.tsx`
+- [x] **COMP-04** Buat `src/components/SearchResults.tsx`
   - Wrapper untuk list AyahCard
   - Handle state: empty, loading, error, hasil
   - Empty state: ilustrasi/icon + teks panduan
@@ -76,32 +83,32 @@
 ---
 
 ### HALAMAN UTAMA
-- [ ] **PAGE-01** Buat `src/app/page.tsx`
+- [x] **PAGE-01** Buat `src/app/page.tsx`
   - Layout: header → SearchBar → VoiceButton → SearchResults
   - State management: `query`, `results`, `loading`, `error`
   - Saat VoiceButton dapat hasil → isi SearchBar → auto-trigger search
   - Scroll ke hasil setelah search selesai
 
-- [ ] **PAGE-02** Buat `src/app/layout.tsx`
+- [x] **PAGE-02** Buat `src/app/layout.tsx`
   - Metadata: title, description, og:image
   - Import font Amiri (Arab) dan Inter (UI)
-  - Dark mode class setup
+  - Dark mode via `prefers-color-scheme` (otomatis ikut sistem)
 
 ---
 
 ### LIB
-- [ ] **LIB-01** Buat `src/lib/quran-api.ts`
+- [x] **LIB-01** Buat `src/lib/quran-api.ts`
   - `searchAyah(query: string): Promise<SearchResult>` → fetch `/api/search`
   - `getAyahDetail(surah: number, ayat: number): Promise<AyahDetail>` → fetch `/api/ayah`
 
 ---
 
 ### STYLING & POLISH
-- [ ] **STYLE-01** Mobile-first responsive layout — test di viewport 375px
-- [ ] **STYLE-02** Dark mode — gunakan Tailwind `dark:` prefix
-- [ ] **STYLE-03** Loading skeleton untuk AyahCard
-- [ ] **STYLE-04** Animasi smooth saat expand/collapse terjemah
-- [ ] **STYLE-05** Empty state illustration (SVG sederhana atau icon lucide)
+- [x] **STYLE-01** Mobile-first responsive layout — test di viewport 375px
+- [x] **STYLE-02** Dark mode — gunakan Tailwind `dark:` prefix
+- [x] **STYLE-03** Loading skeleton untuk AyahCard
+- [x] **STYLE-04** Animasi smooth saat expand/collapse terjemah
+- [x] **STYLE-05** Empty state illustration (SVG sederhana atau icon lucide)
 
 ---
 
@@ -111,7 +118,7 @@
 - [ ] **DEPLOY-03** Test koneksi lambat — pastikan loader muncul
 - [ ] **DEPLOY-04** Push ke GitHub repo `quran-finder`
 - [ ] **DEPLOY-05** Connect ke Vercel, set domain
-- [ ] **DEPLOY-06** Test production build
+- [x] **DEPLOY-06** Test production build
 
 ---
 
@@ -137,8 +144,8 @@
   - Service worker untuk cache aset static
   - "Add to homescreen" prompt di mobile
 
-- [ ] **P2-05** Transliterasi latin di setiap ayat
-  - Sudah di-fetch di `API-02`, tinggal tampilkan di AyahCard
+- [x] **P2-05** Transliterasi latin di setiap ayat
+  - Sudah di-fetch di `API-02`, ditampilkan di AyahCard saat expand
 
 ---
 
@@ -157,21 +164,21 @@
 ## Urutan Ngoding yang Disarankan
 
 ```
-SETUP-01 → SETUP-02 → SETUP-03 → SETUP-04 → SETUP-05
+SETUP-01 → SETUP-02 → SETUP-03 → SETUP-04 → SETUP-05  ✅
     ↓
-TYPE-01
+TYPE-01  ✅
     ↓
-API-01 → API-02        ← test dulu pakai curl/Postman
+API-01 → API-02  ✅
     ↓
-LIB-01
+LIB-01  ✅
     ↓
-COMP-01 → COMP-02 → COMP-03 → COMP-04
+COMP-01 → COMP-02 → COMP-03 → COMP-04  ✅
     ↓
-PAGE-01 → PAGE-02
+PAGE-01 → PAGE-02  ✅
     ↓
-STYLE-01 → STYLE-02 → STYLE-03 → STYLE-04
+STYLE-01 → STYLE-02 → STYLE-03 → STYLE-04  ✅
     ↓
-DEPLOY-01 → ... → DEPLOY-06
+DEPLOY-01 → ... → DEPLOY-06  ← sedang di sini (build OK, deploy belum)
 ```
 
 ---
@@ -184,4 +191,3 @@ DEPLOY-01 → ... → DEPLOY-06
 - Gunakan `Promise.all()` di `API-02` agar 3 fetch jalan paralel, bukan sequential
 - Untuk error Al-Quran Cloud: API kadang lambat atau timeout — set timeout 10 detik dan handle gracefully
 - `cache: 'force-cache'` untuk data ayat, `cache: 'no-store'` untuk search
-
