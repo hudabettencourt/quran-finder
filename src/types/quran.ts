@@ -23,7 +23,7 @@ export type SearchResult = {
 };
 
 export type SearchResponse = SearchResult & {
-  source: "ar" | "id";
+  source: "ar" | "id" | "en";
 };
 
 export type AyahDetail = {

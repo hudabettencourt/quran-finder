@@ -14,6 +14,10 @@ function revelationLabel(type: Ayah["surah"]["revelationType"]) {
   return type === "Meccan" ? "Makkiyah" : "Madaniyah";
 }
 
+function isArabicScript(text: string): boolean {
+  return /[\u0600-\u06FF]/.test(text);
+}
+
 function AyahCardSkeleton() {
   return (
     <div className="mt-3 space-y-2 border-t border-slate-100 pt-3 dark:border-slate-700">
@@ -34,6 +38,7 @@ export default function AyahCard({ ayah, defaultExpanded = false }: AyahCardProp
   const [translation, setTranslation] = useState(ayah.translation ?? "");
   const [transliteration, setTransliteration] = useState(ayah.transliteration ?? "");
   const [arabic, setArabic] = useState(ayah.text);
+  const previewIsArabic = isArabicScript(arabic);
 
   async function handleToggle() {
     const nextExpanded = !expanded;
@@ -79,8 +84,12 @@ export default function AyahCard({ ayah, defaultExpanded = false }: AyahCardProp
       </div>
 
       <p
-        dir="rtl"
-        className="font-arab text-right text-[1.375rem] leading-loose text-slate-900 dark:text-slate-100"
+        dir={previewIsArabic ? "rtl" : "ltr"}
+        className={
+          previewIsArabic
+            ? "font-arab text-right text-[1.375rem] leading-loose text-slate-900 dark:text-slate-100"
+            : "text-left text-base leading-relaxed text-slate-700 italic dark:text-slate-300"
+        }
       >
         {arabic}
       </p>
