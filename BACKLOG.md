@@ -124,22 +124,22 @@
 
 ## PHASE 2 — Post-MVP
 
-- [ ] **P2-01** Audio recitation — tambah tombol play di AyahCard
+- [x] **P2-01** Audio recitation — tambah tombol play di AyahCard
   - URL audio dari Al-Quran Cloud CDN: `https://cdn.alquran.cloud/media/audio/ayah/ar.alafasy/128/{nomor_ayat_global}`
   - Gunakan HTML5 `<audio>` element
   - Satu audio main dalam satu waktu
 
-- [ ] **P2-02** Bookmark ayat favorit
+- [x] **P2-02** Bookmark ayat favorit
   - Simpan ke `localStorage` key: `quran-finder-bookmarks`
   - Halaman `/bookmarks` untuk lihat semua bookmark
   - Toggle bookmark dari AyahCard (icon bintang)
 
-- [ ] **P2-03** Riwayat pencarian
+- [x] **P2-03** Riwayat pencarian
   - Simpan 10 pencarian terakhir ke `localStorage`
   - Tampilkan sebagai suggestion saat SearchBar focus
 
-- [ ] **P2-04** PWA setup
-  - Install `next-pwa`
+- [x] **P2-04** PWA setup
+  - Install `@ducanh2912/next-pwa`
   - Buat `manifest.json` — nama, icon, warna
   - Service worker untuk cache aset static
   - "Add to homescreen" prompt di mobile

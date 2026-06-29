@@ -1,0 +1,25 @@
+{
+  "name": "Quran Finder",
+  "short_name": "Quran Finder",
+  "description": "Cari ayat Al-Quran dari penggalan bacaan — teks latin, Arab, atau terjemah Indonesia.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0F6E56",
+  "orientation": "portrait-primary",
+  "lang": "id",
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-maskable.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}

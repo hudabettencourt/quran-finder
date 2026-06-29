@@ -1,5 +1,6 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Amiri, Inter } from "next/font/google";
+import InstallPrompt from "@/components/InstallPrompt";
 import "./globals.css";
 
 const inter = Inter({
@@ -21,6 +22,16 @@ export const metadata: Metadata = {
   title: "Quran Finder",
   description:
     "Cari ayat Al-Quran dari penggalan bacaan — teks latin, Arab, atau terjemah Indonesia.",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Quran Finder",
+  },
+  icons: {
+    icon: "/icons/icon.svg",
+    apple: "/icons/icon.svg",
+  },
   openGraph: {
     title: "Quran Finder",
     description:
@@ -47,6 +58,10 @@ export const metadata: Metadata = {
   },
 };
 
+export const viewport: Viewport = {
+  themeColor: "#0F6E56",
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -60,6 +75,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-background text-foreground">
         {children}
+        <InstallPrompt />
       </body>
     </html>
   );

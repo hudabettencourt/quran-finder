@@ -1,13 +1,20 @@
 "use client";
 
-import { ChevronDown, ChevronUp } from "lucide-react";
-import { useState } from "react";
+import { ChevronDown, ChevronUp, Pause, Play, Star } from "lucide-react";
+import { useEffect, useState } from "react";
 import { getAyahDetail } from "@/lib/quran-api";
+import {
+  getPlayingAyahNumber,
+  playAyahAudio,
+  subscribePlayingAyah,
+} from "@/lib/audio-player";
+import { isBookmarked, toggleBookmark } from "@/lib/local-storage";
 import type { Ayah } from "@/types/quran";
 
 type AyahCardProps = {
   ayah: Ayah;
   defaultExpanded?: boolean;
+  onBookmarkChange?: (bookmarked: boolean) => void;
 };
 
 function revelationLabel(type: Ayah["surah"]["revelationType"]) {
@@ -28,7 +35,11 @@ function AyahCardSkeleton() {
   );
 }
 
-export default function AyahCard({ ayah, defaultExpanded = false }: AyahCardProps) {
+export default function AyahCard({
+  ayah,
+  defaultExpanded = false,
+  onBookmarkChange,
+}: AyahCardProps) {
   const [expanded, setExpanded] = useState(defaultExpanded);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -38,7 +49,17 @@ export default function AyahCard({ ayah, defaultExpanded = false }: AyahCardProp
   const [translation, setTranslation] = useState(ayah.translation ?? "");
   const [transliteration, setTransliteration] = useState(ayah.transliteration ?? "");
   const [arabic, setArabic] = useState(ayah.text);
+  const [bookmarked, setBookmarked] = useState(() =>
+    isBookmarked(ayah.surah.number, ayah.numberInSurah),
+  );
+  const [playingAyah, setPlayingAyah] = useState<number | null>(null);
+  const [audioError, setAudioError] = useState<string | null>(null);
   const previewIsArabic = isArabicScript(arabic);
+  const isPlaying = playingAyah === ayah.number;
+
+  useEffect(() => {
+    return subscribePlayingAyah(setPlayingAyah);
+  }, []);
 
   async function handleToggle() {
     const nextExpanded = !expanded;
@@ -67,6 +88,25 @@ export default function AyahCard({ ayah, defaultExpanded = false }: AyahCardProp
     }
   }
 
+  async function handlePlayAudio() {
+    setAudioError(null);
+
+    try {
+      await playAyahAudio(ayah.number);
+    } catch {
+      setAudioError("Gagal memutar audio. Silakan coba lagi.");
+      if (getPlayingAyahNumber() === ayah.number) {
+        setPlayingAyah(null);
+      }
+    }
+  }
+
+  function handleToggleBookmark() {
+    const next = toggleBookmark({ ...ayah, text: arabic });
+    setBookmarked(next);
+    onBookmarkChange?.(next);
+  }
+
   return (
     <article className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-shadow hover:shadow-md dark:border-slate-700 dark:bg-slate-800/80">
       <div className="mb-3 flex items-start justify-between gap-3">
@@ -78,9 +118,39 @@ export default function AyahCard({ ayah, defaultExpanded = false }: AyahCardProp
             Surah {ayah.surah.number} · Juz {ayah.juz}
           </p>
         </div>
-        <span className="shrink-0 rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-600 dark:bg-slate-700 dark:text-slate-300">
-          {revelationLabel(ayah.surah.revelationType)}
-        </span>
+        <div className="flex shrink-0 items-center gap-1">
+          <button
+            type="button"
+            onClick={handlePlayAudio}
+            className="inline-flex h-9 w-9 items-center justify-center rounded-full text-teal-700 transition-colors hover:bg-teal-50 dark:text-teal-400 dark:hover:bg-teal-950/40"
+            aria-label={isPlaying ? "Jeda audio tilawah" : "Putar audio tilawah"}
+          >
+            {isPlaying ? (
+              <Pause className="h-4 w-4" aria-hidden="true" />
+            ) : (
+              <Play className="h-4 w-4" aria-hidden="true" />
+            )}
+          </button>
+          <button
+            type="button"
+            onClick={handleToggleBookmark}
+            className={`inline-flex h-9 w-9 items-center justify-center rounded-full transition-colors ${
+              bookmarked
+                ? "text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-950/30"
+                : "text-slate-400 hover:bg-slate-100 hover:text-amber-500 dark:hover:bg-slate-700"
+            }`}
+            aria-label={bookmarked ? "Hapus bookmark" : "Simpan bookmark"}
+            aria-pressed={bookmarked}
+          >
+            <Star
+              className={`h-4 w-4 ${bookmarked ? "fill-current" : ""}`}
+              aria-hidden="true"
+            />
+          </button>
+          <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-600 dark:bg-slate-700 dark:text-slate-300">
+            {revelationLabel(ayah.surah.revelationType)}
+          </span>
+        </div>
       </div>
 
       <p
@@ -93,6 +163,10 @@ export default function AyahCard({ ayah, defaultExpanded = false }: AyahCardProp
       >
         {arabic}
       </p>
+
+      {audioError && (
+        <p className="mt-2 text-xs text-red-600 dark:text-red-400">{audioError}</p>
+      )}
 
       <button
         type="button"
